@@ -1,0 +1,88 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Elements
+    const supportBtn = document.getElementById('supportBtn');
+    const supportOptions = document.getElementById('supportOptions');
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    // Toggle support options
+    supportBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        supportOptions.classList.toggle('active');
+    });
+    
+    // Toggle mobile menu
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('active');
+        // Close support options if open
+        supportOptions.classList.remove('active');
+    });
+    
+    // Close menus when clicking outside
+    document.addEventListener('click', function(event) {
+        // Close support options
+        if (supportOptions.classList.contains('active') && 
+            !supportBtn.contains(event.target) && 
+            !supportOptions.contains(event.target)) {
+            supportOptions.classList.remove('active');
+        }
+        
+        // Close mobile menu
+        if (mobileMenu.classList.contains('active') && 
+            !menuToggle.contains(event.target) && 
+            !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.remove('active');
+        }
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                mobileMenu.classList.remove('active');
+                // Close support options if open
+                supportOptions.classList.remove('active');
+            }
+        });
+    });
+    
+    // Add scroll animation to elements
+    function animateOnScroll() {
+        const elements = document.querySelectorAll('.product-card, .service-card, .about-content');
+        
+        elements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if (elementPosition < screenPosition) {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }
+        });
+    }
+    
+    // Set initial state for animated elements
+    document.querySelectorAll('.product-card, .service-card, .about-content').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+    
+    // Run animation on scroll
+    window.addEventListener('scroll', animateOnScroll);
+    // Run once on page load
+    animateOnScroll();
+});
